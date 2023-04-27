@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Movies.DTOS;
 using Movies.Entities.Movies;
 
 namespace MoviesApi.Controllers
@@ -10,10 +12,12 @@ namespace MoviesApi.Controllers
     public class MoviesController : ControllerBase
     {
         private readonly MoviesDbContext _movieContext;
+        private readonly IMapper _mapper;
 
-        public MoviesController(MoviesDbContext movieContext)
+        public MoviesController(MoviesDbContext movieContext, IMapper mapper)
         {
             _movieContext = movieContext;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -24,14 +28,23 @@ namespace MoviesApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Movie>> GetAll(int id)
+        public async Task<ActionResult<MovieRespDTO>> GetAll(int id)
         {
-            var movies = await _movieContext.Movies
-                .Include( movie => movie.Genres)
-                .Include(movie => movie.MovieRooms)
-                .Include(movie => movie.MoviesActors)
-                .FirstOrDefaultAsync(movie => movie.Id == id);
-            return Ok(movies);
+            var movieDB = await _movieContext.Movies
+                .Include( m => m.Genres)
+                .Include( m => m.MoviesActors)
+                    .ThenInclude(ma => ma.Actor)
+                .Include ( m => m.MovieRooms)
+                    .ThenInclude(mr => mr.MovieTheater)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (movieDB == default)
+                return NotFound();
+
+            var movie = _mapper.Map<MovieRespDTO>(movieDB);
+            movie.MovieTheaters = movie.MovieTheaters.DistinctBy(mt => mt.Id).ToHashSet();
+
+            return Ok(movie);
         }
 
 
