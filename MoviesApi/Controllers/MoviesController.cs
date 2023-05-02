@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +22,9 @@ namespace MoviesApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ICollection<Movie>>> GetAll()
+        public async Task<ActionResult<ICollection<MovieListItemResponseDTO>>> GetAll()
         {
-            var movies = await _movieContext.Movies.Include(movies => movies.Genres).ToListAsync();
+            var movies = await _movieContext.Movies.ProjectTo<MovieListItemResponseDTO>(_mapper.ConfigurationProvider).ToListAsync();
             return Ok(movies);
         }
 
@@ -47,6 +48,37 @@ namespace MoviesApi.Controllers
             return Ok(movie);
         }
 
+        [HttpGet("{id}/useProjectTo")]
+        public async Task<ActionResult<MovieRespDTO>> GetAllProjectTo(int id)
+        {
+            var movieDB = await _movieContext.Movies.ProjectTo<MovieRespDTO>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(x => x.Id == id);
+            movieDB.MovieTheaters = movieDB.MovieTheaters.DistinctBy(mt => mt.Id).ToHashSet();
 
+            return Ok(movieDB);
+        }
+
+        [HttpGet("{id}/useSelect")]
+        public async Task<ActionResult<MovieRespDTO>> GetAllSelect(int id)
+        {
+            var movieDB = await _movieContext.Movies.ProjectTo<MovieRespDTO>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(x => x.Id == id);
+            movieDB.MovieTheaters = movieDB.MovieTheaters.DistinctBy(mt => mt.Id).ToHashSet();
+
+            return Ok(movieDB);
+        }
+
+        [HttpGet("groupByOnBillboard")]
+        public async Task<ActionResult<object>> GetByOnBillboard()
+        {
+            var moviesGroupedByOnBillboard = await _movieContext.Movies.GroupBy(m => m.OnBillboard == true)
+                .Select( m => new
+                {
+                    OnBillBoard = m.Key,
+                    Qty = m.Count(),
+                    Movies = m.ToList()
+                })
+                .ToListAsync();
+
+            return Ok(moviesGroupedByOnBillboard);
+        }
     }
 }
