@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Movies.DTOS;
 using Movies.Entities.Movies;
 
@@ -79,6 +80,24 @@ namespace MoviesApi.Controllers
                 .ToListAsync();
 
             return Ok(moviesGroupedByOnBillboard);
+        }
+
+        [HttpGet("useQueryable")]
+        public async Task<ActionResult<MovieListItemResponseDTO>> GetAllUseQueryable([FromQuery] MovieFilterDTO movieFilterDTO)
+        {
+            var moviesQuery = _movieContext.Movies.AsQueryable();
+
+            if (!movieFilterDTO.Title.IsNullOrEmpty())
+                moviesQuery = moviesQuery.Where(m => m.Title.Contains(movieFilterDTO.Title));
+
+            if (movieFilterDTO.OnBillBoard != null)
+                moviesQuery = moviesQuery.Where(m => m.OnBillboard  == movieFilterDTO.OnBillBoard);
+
+            var moviesDB = await moviesQuery.Include(m => m.Genres).ToListAsync();
+
+            var movies = _mapper.Map<List<MovieListItemResponseDTO>>(moviesDB);
+
+            return Ok(movies);
         }
     }
 }
