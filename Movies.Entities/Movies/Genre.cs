@@ -5,6 +5,6 @@ namespace Movies.Entities.Movies
     {
         public int Identifier { get; set; }
         public string Name { get; set; }
-        public HashSet<Movie> Movies { get; set; }
+        public HashSet<Movie>? Movies { get; set; }
     }
 }
