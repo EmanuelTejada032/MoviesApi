@@ -1,11 +1,14 @@
-﻿namespace Movies.Entities.Movies
+﻿
+using System.ComponentModel.DataAnnotations;
+
+namespace Movies.DTOS
 {
-    public class MovieTheaterOffer
+    public class MovieTheaterOfferRequestDTO
     {
-        public int Id { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+
+        [Range(1,100)]
         public decimal DiscountPercentaje { get; set; }
-        public int MovieTheaterId { get; set; }
     }
 }

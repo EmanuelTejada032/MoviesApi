@@ -32,6 +32,14 @@ namespace Movies.Helpers
                     .ForMember(dto => dto.MovieTheaters, entitie => entitie.MapFrom(prop => prop.MovieRooms.Select(mr => mr.MovieTheater)))
                     .ForMember(dto => dto.Actors, entitie => entitie.MapFrom(prop => prop.MoviesActors.Select(ma => ma.Actor)));
             */
+
+            CreateMap<MovieTheaterRequestDTO, MovieTheater>();
+
+            CreateMap<MovieRoomRequestDTO, MovieRoom>();
+            CreateMap<MovieTheaterOfferRequestDTO, MovieTheaterOffer>();
+
+
+
         }
     }
 }
