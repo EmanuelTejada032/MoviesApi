@@ -8,9 +8,9 @@ namespace Movies.Entities.Movies
         public bool OnBillboard { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string PosterUrl { get; set; }
-        public HashSet<Genre> Genres { get; set; }
-        public HashSet<MovieRoom> MovieRooms { get; set; }
-        public HashSet<MoviesActors> MoviesActors { get; set; }
+        public List<Genre> Genres { get; set; }
+        public List<MovieRoom> MovieRooms { get; set; }
+        public List<MoviesActors> MoviesActors { get; set; }
 
     }
 }

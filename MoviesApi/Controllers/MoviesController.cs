@@ -99,5 +99,21 @@ namespace MoviesApi.Controllers
 
             return Ok(movies);
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Create(MovieDataRequestDTO movieDataRequestDTO)
+        {
+            var movie = _mapper.Map<Movie>(movieDataRequestDTO);
+
+            movie.Genres.ForEach(genre => _movieContext.Entry(genre).State = EntityState.Unchanged);
+            movie.MovieRooms.ForEach(movieroom => _movieContext.Entry(movieroom).State = EntityState.Unchanged);
+
+            _movieContext.Add(movie);
+            await _movieContext.SaveChangesAsync();
+
+            return StatusCode(201);
+
+        }
     }
 }

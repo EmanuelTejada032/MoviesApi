@@ -39,7 +39,11 @@ namespace Movies.Helpers
             CreateMap<MovieTheaterOfferRequestDTO, MovieTheaterOffer>();
 
 
+            CreateMap<MovieDataRequestDTO, Movie>()
+                .ForMember( m => m.Genres, dto => dto.MapFrom( prop => prop.Genres.Select( id => new Genre() { Identifier = id})))
+                .ForMember(m => m.MovieRooms, dto => dto.MapFrom(prop => prop.MovieRooms.Select(id => new MovieRoom() { Id = id })));
 
+            CreateMap<MoviesActorRequestDTO, MoviesActors>();
         }
     }
 }
