@@ -16,6 +16,8 @@ namespace Movies.Helpers
 
             CreateMap<Genre, GenreRespDTO>();
 
+            CreateMap<GenreRequestDTO,Genre>();
+
             CreateMap<Movie, MovieListItemResponseDTO>()
                 .ForMember(dto => dto.Genres, entitie => entitie.MapFrom(prop => prop.Genres.Select(g => g.Name)))
                 .ForMember(dto => dto.Actors, entitie => entitie.MapFrom(prop => prop.MoviesActors.Select(ma => ma.Actor).Select( a => a.Name)));
