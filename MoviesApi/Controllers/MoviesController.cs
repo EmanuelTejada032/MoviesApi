@@ -115,5 +115,28 @@ namespace MoviesApi.Controllers
             return StatusCode(201);
 
         }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, MovieUpdateReqDTO movieUpdateRequestDTO)
+        {
+            var movie = await _movieContext.Movies.Where(m => m.Id == id).FirstOrDefaultAsync();
+
+            if (movie == default) return NotFound();
+
+            movie = _mapper.Map(movieUpdateRequestDTO, movie);
+
+            await _movieContext.SaveChangesAsync(); 
+
+            return Ok(movie);
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var movie = new Movie { Id = id };
+            _movieContext.Movies.Remove(movie);
+            await _movieContext.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

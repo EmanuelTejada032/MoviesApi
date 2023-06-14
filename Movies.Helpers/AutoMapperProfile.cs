@@ -46,6 +46,8 @@ namespace Movies.Helpers
                 .ForMember(m => m.MovieRooms, dto => dto.MapFrom(prop => prop.MovieRooms.Select(id => new MovieRoom() { Id = id })));
 
             CreateMap<MoviesActorRequestDTO, MoviesActors>();
+
+            CreateMap<MovieUpdateReqDTO, Movie>();
         }
     }
 }
