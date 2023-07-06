@@ -15,6 +15,7 @@ namespace Movies.Entities.Movies.Configurations
         public void Configure(EntityTypeBuilder<Genre> builder)
         {
             builder.HasKey(prop => prop.Identifier);
+            builder.HasQueryFilter(prop => prop.Name != "terrifying drama");
         }
     }
 }
